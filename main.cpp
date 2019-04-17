@@ -13,7 +13,8 @@ struct Muchie{
 };
 
 struct Stare{
-    queue<int> stariLambda;
+    int stariLambda[100];
+    int contor;
 };
 
 bool verificaAlfabet( char cuvant[10], char alfabet[10]){
@@ -33,27 +34,75 @@ int main(){
     int stareInit = 0;
     char alfabet[] = "ab#";
     char cuvant[] = "baa";
-    int i = 0;
+
 
 
     queue <int> q;
-    Muchie m[nrMuchii];
-    Stare st[nrStari];
+    Muchie m[19];
+    Stare st[8];
 
     if(!verificaAlfabet( cuvant, alfabet )){
         return 0;
     }
     else{
-        while( !fin.eof() ){
-            fin >> m[i].rad >> m[i].dest >> m[i].litera;
+        for( int k = 0 ; k < nrStari; k++){
+            st[k].contor = 1;
+        }
+        int i = 0;
+        while( fin >> m[i].rad >> m[i].dest >> m[i].litera ){
+            st[m[i].rad].stariLambda[0]= m[i].rad; //bagam pe el insusi
             if(m[i].litera == lambda){
-                st[m[i].rad].stariLambda.push(m[i].dest);
+                st[m[i].rad].stariLambda[st[m[i].rad].contor] = m[i].dest;
+                st[m[i].rad].contor++;
             }
             i++;
         }
-        for( int i = 0 ; i < nrMuchii; i++ ){cout << m[i].rad << " " << m[i].dest << " " << m[i].litera << endl;}
+        fin.close();
+        for( int j = 0 ; j < nrMuchii; j++ ){cout << m[j].rad << " " << m[j].dest << " " << m[j].litera << endl;}
 
-        q.push(stareInit);
+        for( int h = 0 ; h < st[5].contor; h++){
+            cout << st[5].stariLambda[h] << " ";
+        }
+        for(i = 0 ; i < nrStari; i++){
+            cout << "-------------------EMPTY QUEUE ---- INCEPE STAREA: " << i << "-------------------"<< endl;
+            //vreau pt toate starile sa gasesc lambda
+            queue<int> c;
+            int viz[nrStari] = {0};
+            viz[i] = 1;
+            //deja am bagat fii directi, trec la ei;
+
+            //bag fii directi in coada
+            for(int j = 1; j < st[i].contor; j++){
+                if(st[i].stariLambda[j] != 1){
+                    c.push(st[i].stariLambda[j]);
+                    cout << "---Pushed " << st[i].stariLambda[j] << endl;
+                }
+            }
+            while( !c.empty()){
+            //o sa vreau fiii fiilor si tot asa
+                int curent = c.front();
+                c.pop();
+                cout << "---Popped " << curent << endl;
+                viz[curent] = 1;
+                cout<< "Ne aflam pe " << curent << " are lambda fii: "<< endl;
+                for( int k = 0 ; k < st[curent].contor; k++){
+                    cout << st[curent].stariLambda[k] << " ";
+                    //adaug la lambdaStari vector al tatalui i pe curent
+                    if( viz[st[curent].stariLambda[k]] != 1 ){
+                        st[i].contor++;
+                        st[i].stariLambda[st[i].contor] = st[curent].stariLambda[k];
+                        cout << endl <<"  ****Am adaugat " << st[curent].stariLambda[k] <<" la starea " << i;
+                        c.push(st[curent].stariLambda[k]);
+                        viz[st[curent].stariLambda[k]] = 1;
+                    }
+                }
+                cout << endl << endl;
+            }
+            cout << "------------------------------ " << i << " done -------------------"<< endl;
+        }
+
+        /*
+        q.push(stareInit); //s
         int contor = 1;
         for(int k = 0; k < strlen(cuvant); k++ ){
             int x = contor;
@@ -92,6 +141,8 @@ int main(){
         }
     }
     cout << y <<"Cuvantul poate fi tranpus, dar nu exista stare finala pentru el";
+    }
+    */
     }
     return 0;
 }
