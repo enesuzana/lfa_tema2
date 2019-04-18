@@ -28,7 +28,7 @@ bool verificaAlfabet( char cuvant[10], char alfabet[10]){
     return true;
 }
 
-bool checkFinal(int verif, int finale[]){
+bool checkFinal(int verif, int finale[], int nrFin){
     for(int i = 0 ; i < nrFin ; i++){
         if(verif == finale[i]){
             return true;
@@ -37,11 +37,18 @@ bool checkFinal(int verif, int finale[]){
     return false;
 }
 
+void emptyy(int checked[], int nrStari){
+    for(int i = 0 ; i < nrStari; i++){
+        checked[i] = 0;
+    }
+}
+
 int main(){
     int nrStari = 7, nrFinale = 2, nrMuchii = 19;
     int finale[nrFinale] = {2, 6};
+    int nrFin = 2;
     char alfabet[] = "ab#";
-
+    char cuvant[] = "b";
 
 
     queue <int> q;
@@ -87,7 +94,7 @@ int main(){
             }
             //parcurg in latime
             while( !c.empty()){
-            //o sa vreau fiii fiilor si tot asa
+            //o saint checked[nrStari] = {0}; vreau fiii fiilor si tot asa
                 int curent = c.front();
                 c.pop();
                 cout << "---Popped " << curent << endl;
@@ -117,44 +124,55 @@ int main(){
         */
         //ACCEPTARE CUVANT:un cuv e acceptat daca intre oricare 2 litere avem oricat de multe lambda tranzitii
         int stareInit = 0;
-        char cuvant[] = "baa";
+        int checked[nrStari];
         if( st[stareInit].contor == 1 ){
-            cout <<"INVALID!!"
+            cout <<"INVALID!!";
             return 0;
         }
         //coada noua cu lambdaVector pt stareInit
         queue<int> iesLambda;
         queue<int> iesLitere;
+        cout << " stInit  populare " << endl;
         for(i = 0 ; i < st[stareInit].contor; i++){
             iesLambda.push(st[stareInit].stariLambda[i]);// 023456
+            cout << " Pushed in iesLambda " << st[stareInit].stariLambda[i] << endl;
         }
         //verificam cuvant
-        for( k = 0; k < strlen(cuvant); k++){
+        for(int k = 0; k < strlen(cuvant); k++){
             //lambda
-            int checked[nrStari] = {0};
+            cout << "#######SUNT PE LITERA " << cuvant[k] << endl;
+
+            emptyy(checked, nrStari); // vector de vizitati
             //caut starile in care ajunge cu litera dorita, le bag in a doua coada
+            cout << "^^^^^^^^Verific cu litera mea^^^^^^^^" << endl;
+            checked[nrStari] = {0};
             while(!iesLambda.empty()){
                 int luat = iesLambda.front();
                 iesLambda.pop();
+                cout << "* Popped out of iesLambda "<<  luat << endl;
                 char lit = cuvant[k];
-
                 for(int j = 0 ; j < nrMuchii; j++){
                     if( m[j].rad == luat && m[j].litera == lit ){
                         if(checked[m[j].dest] != 1){
                             iesLitere.push(m[j].dest);
+                            cout << "* Pushed in iesLitere "<< m[j].dest << endl;
                             checked[m[j].dest] = 1;
                         }
                     }
                 }
             }
             //la rand starile in care am ajuns cu LIT, dar acum cautam sa vedem unde merg cu lambda
-            checked[nrStari] = {0};
+            cout << "^^^^^^^^Verific cu LAMBDA^^^^^^^^"<< endl;
+            emptyy(checked, nrStari);
             while(!iesLitere.empty()){
                 int luat = iesLitere.front();
                 iesLitere.pop();
+                cout << "* Popped out of iesLitere "<< luat << endl;
                 for(i = 0 ; i < st[luat].contor; i++){
-                    if(checked[st[luat].stariLambda[i] != 1){
+                    if(checked[st[luat].stariLambda[i]] != 1){
                         iesLambda.push(st[luat].stariLambda[i]);// 023456
+                        //iesLitere.push(st[luat].stariLambda[i]);
+                        cout << "* Pushed in iesLambda "<< st[luat].stariLambda[i] << endl;
                         checked[st[luat].stariLambda[i]] = 1;
                     }
                 }
@@ -165,7 +183,7 @@ int main(){
         for(int i = 0 ; i < iesLambda.size(); i++){
             int verif = iesLambda.front();
             iesLambda.pop();
-            conditie = checkFinal(verif, finale);
+            conditie = checkFinal(verif, finale, nrFin);
             if( conditie == true){
                 cout << "ACCEPTAT!";
                 return 0;
