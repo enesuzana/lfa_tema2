@@ -12,8 +12,15 @@ struct Muchie{
     char litera;
 };
 
+struct Element{
+    int s[100];
+    int contorAFD;
+    char lit;
+};
+
 struct Stare{
     int stariLambda[100];
+    Element stariAFD[2];
     int contor;
 };
 
@@ -43,17 +50,48 @@ void emptyy(int checked[], int nrStari){
     }
 }
 
+//returneaza o coada cu starile in care ajung din 'stare' folosind litera 'lit'
+queue<int> toLitera(int stare, char lit, Muchie m[], int nrTranz){
+    int viz[10] = {0};
+    queue<int> q;
+    int ok = 0;
+    for(int i = 0 ; i < nrTranz; i++){
+        if( m[i].rad == stare && m[i].litera == lit){
+            if(!viz[m[i].dest]){
+                ok = 1;
+                q.push(m[i].dest);
+                viz[m[i].dest] = 1;
+            }
+        }
+    }
+    if( ok == 0){
+        //nu ajungem nicaieri
+        queue<int> r;
+        return r;
+    }
+    return q;
+}
+
+//returneaza o coada cu starile in care ajung din stare folosind vectorul lambda al fiecarei stari
+queue<int> toLambda(int stare, Stare st[], int nrStari){
+    queue<int> q;
+    for( int i = 0; i < st[stare].contor; i++){
+        q.push(st[stare].stariLambda[i]);
+    }
+    return q;
+}
+
 int main(){
     int nrStari = 7, nrFinale = 2, nrMuchii = 19;
     int finale[nrFinale] = {2, 6};
     int nrFin = 2;
-    char alfabet[] = "ab#";
-    char cuvant[] = "b";
+    char alfabet[] = "ab";
+    char cuvant[] = "abbba";
 
 
     queue <int> q;
     Muchie m[19];
-    Stare st[8];
+    Stare st[8]; //AFN-LAMBDA
 
     if(!verificaAlfabet( cuvant, alfabet )){
         return 0;
@@ -186,13 +224,57 @@ int main(){
             conditie = checkFinal(verif, finale, nrFin);
             if( conditie == true){
                 cout << "ACCEPTAT!";
-                return 0;
+
             }
         }
-        if( conditie == false ){
+        if( conditie = false ){
             cout << "NEACCEPTAT";
         }
 
+        Muchie afd[nrMuchii];
+
+        afd[0].rad = m[0].rad; // starea initiala ramane la fel ca in afn lambda
+        //toLitera(stare, litera);
+        for( int i = 0 ; i < nrStari; i++){
+            cout << "------Suntem pe starea" << i << endl;
+            int vizitati[nrStari];
+            //extragem vector de Lambda pt i
+            for( int contor = 0; contor < strlen(alfabet); contor++){
+                    char litTemp = alfabet[contor]; // litera mea
+                    //contor imi spune pe ce litera voi baga pt starea i urmatoarele
+                    st[i].stariAFD[contor].lit = litTemp;
+                    st[i].stariAFD[contor].contorAFD = 0;
+                    emptyy(vizitati, nrStari);
+            for(int k = 0;  k < st[i].contor; k++){
+                int stare = st[i].stariLambda[k]; // extragem pe rand starile
+                //caut pt fiecare litera in ce stare ajung pornind din 'stare' actuala
+                    queue<int> coadaLit = toLitera(stare, litTemp, m, nrMuchii); // returnez o coada de stari in care ajung cu litera mea din stare
+                    while(!coadaLit.empty()){
+                        int extras = coadaLit.front();
+                        coadaLit.pop();
+                        queue<int> pushed = toLambda(extras, st, nrStari); // coada cu toate starile in care ajunge cu lambda
+                        while( !pushed.empty()){ // bag starile cu lambda in starea i initiala, salvez, repet pt fiecare stare in care ajunsesem cu litera data
+                            int bagat = pushed.front();
+                            pushed.pop();
+                            if(vizitati[bagat] != 1){
+                                st[i].stariAFD[contor].s[st[i].stariAFD[contor].contorAFD] = bagat;
+                                st[i].stariAFD[contor].contorAFD++;
+                                vizitati[bagat] = 1;
+                                cout << "I pushed "<< bagat <<" in stariAFD of " << i << "with char " << litTemp << endl;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        cout << "afisare scurta " << endl;
+        for(int c = 0 ; c < nrStari; c++){
+            for( int j = 0; j < st[i].stariAFD[1].contorAFD; j++){
+                cout << st[c].stariAFD[1].s[j] << "  ";
+            }
+            cout << endl;
+        }
 
 
         /*
