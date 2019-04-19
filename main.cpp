@@ -13,7 +13,7 @@ struct Muchie{
 };
 
 struct Element{
-    int s[100];
+    int s[10];
     int contorAFD;
     char lit;
 };
@@ -54,21 +54,15 @@ void emptyy(int checked[], int nrStari){
 queue<int> toLitera(int stare, char lit, Muchie m[], int nrTranz){
     int viz[10] = {0};
     queue<int> q;
-    int ok = 0;
     for(int i = 0 ; i < nrTranz; i++){
         if( m[i].rad == stare && m[i].litera == lit){
             if(!viz[m[i].dest]){
-                ok = 1;
                 q.push(m[i].dest);
                 viz[m[i].dest] = 1;
             }
         }
     }
-    if( ok == 0){
-        //nu ajungem nicaieri
-        queue<int> r;
-        return r;
-    }
+
     return q;
 }
 
@@ -261,6 +255,7 @@ int main(){
                                 st[i].stariAFD[contor].contorAFD++;
                                 vizitati[bagat] = 1;
                                 cout << "I pushed "<< bagat <<" in stariAFD of " << i << "with char " << litTemp << endl;
+                                cout<< "avem elemente nr: " << st[i].stariAFD[contor].contorAFD << endl;
                             }
                         }
                     }
@@ -268,12 +263,17 @@ int main(){
             }
         }
 
-        cout << "afisare scurta " << endl;
+        cout << endl<< "FIECARE STARE -> LAMBDA LITERA LAMBDA " << endl;
         for(int c = 0 ; c < nrStari; c++){
-            for( int j = 0; j < st[i].stariAFD[1].contorAFD; j++){
-                cout << st[c].stariAFD[1].s[j] << "  ";
+            cout << "----------starea   " << c << endl;
+            for( int i = 0 ; i < strlen(alfabet); i++){
+                cout <<" LIT : " << alfabet[i] << endl;
+                for( int j = 0; j < st[c].stariAFD[i].contorAFD; j++){
+                    cout << st[c].stariAFD[i].s[j] << "  ";
+                }
+                cout << endl;
             }
-            cout << endl;
+             cout<< endl << "----------";
         }
 
 
