@@ -225,10 +225,6 @@ int main(){
             cout << "NEACCEPTAT";
         }
 
-        Muchie afd[nrMuchii];
-
-        afd[0].rad = m[0].rad; // starea initiala ramane la fel ca in afn lambda
-        //toLitera(stare, litera);
         for( int i = 0 ; i < nrStari; i++){
             cout << "------Suntem pe starea" << i << endl;
             int vizitati[nrStari];
@@ -277,6 +273,106 @@ int main(){
         }
 
 
+        Muchie afd[nrMuchii];
+        int next = nrStari;
+        int numara = 0;
+        queue<int> finale;
+
+        // starea initiala ramane la fel ca in afn lambda
+        char indiceA[st[0].stariAFD[0].contorAFD];
+        for(int i = 0 ; i < st[0].stariAFD[0].contorAFD; i++){
+            indiceA[i] = '0' + st[0].stariAFD[0].s[i];
+            cout << indiceA[i];
+        }
+        char indiceB[st[0].stariAFD[1].contorAFD];
+        cout << endl;
+        for(int i = 0 ; i < st[0].stariAFD[1].contorAFD; i++){
+            indiceB[i] = '0' + st[0].stariAFD[1].s[i];
+            cout << indiceB[i];
+        }
+        cout << endl;
+        //prima secventa de indici, din stare initiala am indiciiA, indicii B
+
+
+        for( int i = 0 ; i < strlen(alfabet); i++){
+                afd[numara].rad = stareInit;
+                afd[numara].dest = next;
+                afd[numara].litera = alfabet[i];
+                finale.push(next);
+                next++;
+                numara++;
+        }
+        //am facut 2 muchii initiala ( stInit + fiu1, fiu2)
+
+        //parcurg fiii prin ambele litere
+        int vizz[nrStari];
+        while(!finale.empty()){
+                int pop = finale.front();
+                finale.pop();
+                emptyy(vizz, nrStari);
+        for(int j = 0 ; j < strlen(alfabet); j++){
+            char l = alfabet[j];  //litera curenta
+            //
+            afd[numara].rad = pop;
+            afd[numara].litera = l;
+            //muchia noua
+            int vizitati[nrStari];
+            emptyy(vizitati,nrStari);
+            int p = 0;
+            char verify[st[0].stariAFD[j].contorAFD]; // folosim ca sa vedem daca se repeta starile
+
+
+            for( int i = 0 ; i < st[0].stariAFD[j].contorAFD; i++){
+                int temp = st[0].stariAFD[j].s[i];
+                queue<int> tmp;// bag in el toate starile lambdaCHARlambda
+                for(int k = 0 ; k < st[temp].stariAFD[j].contorAFD; k++){
+                    if( vizitati[st[temp].stariAFD[j].s[k]] != 1){
+                        verify[p] = '0' + st[temp].stariAFD[j].s[k];
+                        p++;
+                        tmp.push(st[temp].stariAFD[j].s[k]);
+                        cout << temp << "  pushed "<< st[temp].stariAFD[j].s[k] << endl;
+                        vizitati[st[temp].stariAFD[j].s[k]] = 1;
+                    }
+                }
+                if( l == 'a'){
+                    if(strcmp(verify, indiceA) == 0){
+                        //sunt engale, e muchie noua cu bucla
+                        vizz[pop]++;
+                        afd[numara].dest = pop;
+                    }
+                    else{
+                        //diferite, creez stare noua
+                        afd[numara].dest = next;
+                        finale.push(next);
+                        next++;
+                    }
+                }
+                if( l == 'b'){
+                    if(strcmp(verify, indiceB) == 0){
+                        vizz[pop]++;
+                        afd[numara].dest = pop;
+                    }
+                    else{
+                        afd[numara].dest = next;
+                        finale.push(next);
+                        next++;
+                    }
+                }
+
+            }
+            if( vizz[pop] >= 2){ cout <<"END" ; break;}
+            cout << "a doua lit" << endl;
+            numara++;
+        }
+        }
+        cout << endl;
+        for( int i = 0 ; i < numara; i++){
+            cout << afd[i].rad << "+" << afd[i].dest << " lit: " << (char)afd[i].litera << endl;
+        }
+    }
+
+
+
         /*
         q.push(stareInit); //s
         int contor = 1;
@@ -319,6 +415,5 @@ int main(){
     cout << y <<"Cuvantul poate fi tranpus, dar nu exista stare finala pentru el";
     }
     */
-    }
     return 0;
 }
