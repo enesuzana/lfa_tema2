@@ -24,6 +24,11 @@ struct Stare{
     int contor;
 };
 
+struct Indice{
+    char ind[100];
+};
+
+
 bool verificaAlfabet( char cuvant[10], char alfabet[10]){
     for( int i = 0; i < strlen(cuvant); i++){
         char *p = strchr(alfabet, cuvant[i]);
@@ -74,6 +79,7 @@ queue<int> toLambda(int stare, Stare st[], int nrStari){
     }
     return q;
 }
+
 
 int main(){
     int nrStari = 7, nrFinale = 2, nrMuchii = 19;
@@ -282,97 +288,122 @@ int main(){
         char indiceA[st[0].stariAFD[0].contorAFD];
         for(int i = 0 ; i < st[0].stariAFD[0].contorAFD; i++){
             indiceA[i] = '0' + st[0].stariAFD[0].s[i];
-            cout << indiceA[i];
         }
         char indiceB[st[0].stariAFD[1].contorAFD];
         cout << endl;
         for(int i = 0 ; i < st[0].stariAFD[1].contorAFD; i++){
             indiceB[i] = '0' + st[0].stariAFD[1].s[i];
-            cout << indiceB[i];
         }
         cout << endl;
         //prima secventa de indici, din stare initiala am indiciiA, indicii B
 
+        //finale.push(stareInit);
 
         for( int i = 0 ; i < strlen(alfabet); i++){
                 afd[numara].rad = stareInit;
                 afd[numara].dest = next;
                 afd[numara].litera = alfabet[i];
                 finale.push(next);
-                next++;
-                numara++;
+                cout << next << " ";
+                next++; //cresc nr de stari
+                numara++; //cresc nr de tranzitii
         }
         //am facut 2 muchii initiala ( stInit + fiu1, fiu2)
 
         //parcurg fiii prin ambele litere
         int vizz[nrStari];
+        int variant = 0;
+        int LIT = -1;
         while(!finale.empty()){
-                int pop = finale.front();
-                finale.pop();
-                emptyy(vizz, nrStari);
-        for(int j = 0 ; j < strlen(alfabet); j++){
-            char l = alfabet[j];  //litera curenta
-            //
-            afd[numara].rad = pop;
-            afd[numara].litera = l;
-            //muchia noua
-            int vizitati[nrStari];
-            emptyy(vizitati,nrStari);
-            int p = 0;
-            char verify[st[0].stariAFD[j].contorAFD]; // folosim ca sa vedem daca se repeta starile
-
-
-            for( int i = 0 ; i < st[0].stariAFD[j].contorAFD; i++){
-                int temp = st[0].stariAFD[j].s[i];
-                queue<int> tmp;// bag in el toate starile lambdaCHARlambda
-                for(int k = 0 ; k < st[temp].stariAFD[j].contorAFD; k++){
-                    if( vizitati[st[temp].stariAFD[j].s[k]] != 1){
-                        verify[p] = '0' + st[temp].stariAFD[j].s[k];
-                        p++;
-                        tmp.push(st[temp].stariAFD[j].s[k]);
-                        cout << temp << "  pushed "<< st[temp].stariAFD[j].s[k] << endl;
-                        vizitati[st[temp].stariAFD[j].s[k]] = 1;
-                    }
+            int pop = finale.front();
+            finale.pop();
+            cout << "sunt pe starea "<<pop << endl << endl;
+            LIT++;
+            queue<int> tmp;
+            for(int j = 0 ; j < strlen(alfabet); j++){
+                char l = alfabet[j];  //litera curenta
+                cout << "sunt pe litera " << l << endl;
+                afd[numara].rad = pop;
+                afd[numara].litera = l;
+                for(int f = 0 ; f < st[0].stariAFD[LIT].contorAFD; f++){
+                tmp.push(st[0].stariAFD[LIT].s[f]);
                 }
-                if( l == 'a'){
+            //muchia noua
+                int vizitati[nrStari];
+                emptyy(vizitati,nrStari);
+            //viz pt stariAFD
+                int p = 0;
+                char verify[st[0].stariAFD[j].contorAFD]; // folosim ca sa vedem daca se repeta starile
+            //ce pun la .dest
+                 // extrag prima stare din lista
+            //parcurg la prima stare toate starile componente
+                    while(!tmp.empty()){
+                    int temp = tmp.front();
+                    tmp.pop();
+
+                    cout << "temp este  " << temp  << endl;
+
+                    for(int k = 0 ; k < st[temp].stariAFD[j].contorAFD; k++){
+                        if( vizitati[st[temp].stariAFD[j].s[k]] != 1){
+                        //nu e vizitata, o adaug la cuvant
+                            verify[p] = '0' + st[temp].stariAFD[j].s[k];
+                            p++;
+                            tmp.push(st[temp].stariAFD[j].s[k]);
+                            cout << temp << "  pushed "<< st[temp].stariAFD[j].s[k] << endl;
+                            vizitati[st[temp].stariAFD[j].s[k]] = 1; //vizitez
+                        }
+                         // extrag prima stare din lista
+                    }}
+
+
+
+                    if( l == 'a'){
                     if(strcmp(verify, indiceA) == 0){
+                        cout << " sunt pe 'a egale" << endl;
                         //sunt engale, e muchie noua cu bucla
                         vizz[pop]++;
                         afd[numara].dest = pop;
+                        numara++;
                     }
                     else{
-                        //diferite, creez stare noua
+                        //diferite, creez stare nou
+                        //finale.push(next);
+                        if(strcmp(verify, indiceB) != 0){next--;}
                         afd[numara].dest = next;
-                        finale.push(next);
                         next++;
+                        numara++;
                     }
                 }
+
                 if( l == 'b'){
                     if(strcmp(verify, indiceB) == 0){
                         vizz[pop]++;
                         afd[numara].dest = pop;
+                        numara++;
                     }
                     else{
+                        //finale.push(next);
+                        if(strcmp(verify, indiceA) != 0){next--;}
                         afd[numara].dest = next;
-                        finale.push(next);
                         next++;
+                        numara++;
                     }
                 }
+            //if( vizz[pop] > 3){ cout <<"END" ; break;}
+            cout << "a doua lit" << endl;
+
 
             }
-            if( vizz[pop] >= 2){ cout <<"END" ; break;}
-            cout << "a doua lit" << endl;
-            numara++;
+            variant = st[0].stariAFD[1].s[0];
         }
-        }
-        cout << endl;
+
+        cout << endl << "AFD:";
         for( int i = 0 ; i < numara; i++){
             cout << afd[i].rad << "+" << afd[i].dest << " lit: " << (char)afd[i].litera << endl;
         }
     }
 
-
-
+        //verificare cuvant intr-un AFD
         /*
         q.push(stareInit); //s
         int contor = 1;
